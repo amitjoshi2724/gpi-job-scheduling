@@ -13,7 +13,7 @@ This repository contains the implementation and benchmarking code for the linear
 
 ## Overview
 
-The classic Weighted Job Scheduling problem is traditionally solved using dynamic programming with a time complexity of $O(n \log n)$. This implementation provides a linear-time algorithm ($O(n)$), assuming job times are integers within a bounded range.
+The classic Weighted Job Scheduling problem is traditionally solved using dynamic programming and binary search with a time complexity of $O(n \log n)$. This implementation provides a linear-time algorithm, assuming job times are integers within a bounded range. My main contribution is avoiding repeated binary searches with a custom preprocessing algorithm. Coupled with linear sorting algorithms, we can now solve Weighted Job Scheduling in $O(n)$ under very realistic assumptions.
 
 ### Files
 
