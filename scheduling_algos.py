@@ -17,7 +17,7 @@
 # Email 2: amit.joshiusa@gmail.com
 # GitHub: https://github.com/amitjoshi24
 
-
+# bisect_right, a binary search
 def find_pred(jobs, start_i):
     lo, hi = 0, len(jobs)
     while lo < hi:
@@ -28,6 +28,7 @@ def find_pred(jobs, start_i):
             hi = mid
     return lo - 1  # correctly gives index of latest non-overlapping job
 
+# O(n log(n)) DP solution for WIS, our baseline to improve upon
 def classic_weighted_interval_scheduling(jobs, sortAlgo='default'):
     if sortAlgo == 'radix':
         jobs = radix_sort(jobs, key_index=1) # sort by end time with radix sort
@@ -58,7 +59,7 @@ def radix_sort(jobs, key_index):
         exp *= base
     return jobs
 
-# Template for your linear-time implementation
+# Our novel O(n) Multi-Phase Preprocessing and DP Solution for WIS!
 def linear_time_weighted_scheduling(jobs):
     n = len(jobs)
     end_ordered = radix_sort(jobs, key_index=1)  # sort by end time, 0-indexed array

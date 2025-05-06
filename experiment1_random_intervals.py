@@ -1,31 +1,32 @@
 import random
 import time
+import gc
 import matplotlib.pyplot as plt
+from scheduling_algos import classic_weighted_interval_scheduling, linear_time_weighted_scheduling
 
+RANDOM_SEED = 2724
 
-
-
-
+random.seed(RANDOM_SEED)
 results_classic = []
 results_linear = []
 
-for n in range(1000, 100001, 1000):
+for n in range(1000, 100000+1, 1000):
     total_classic = 0
     total_linear = 0
-    runs = 20
+    runs = 5
     MAX_VAL = 10**6
     for _ in range(runs):
         jobs = [(random.randint(0, MAX_VAL), random.randint(0, MAX_VAL), random.randint(1, 100)) for _ in range(n)]
         jobs = [(min(s, e), max(s, e), w) for s, e, w in jobs]
-        #jobs = [(52, 60, 76), (82, 86, 9), (10, 49, 63), (63, 75, 33)]
-        #print (jobs)
         # Classic
+        gc.collect()
         start = time.perf_counter()
-        classicAnswer = classic_weighted_interval_scheduling(jobs)
+        classicAnswer = classic_weighted_interval_scheduling(jobs, sortAlgo="radix") # as opposed to "default"
         end = time.perf_counter()
         total_classic += (end - start)
 
-        # Linear (call your real implementation here)
+        # Linear
+        gc.collect()
         start = time.perf_counter()
         linearTimeAnswer = linear_time_weighted_scheduling(jobs)
         end = time.perf_counter()
@@ -46,7 +47,7 @@ ns_classic, times_classic = zip(*results_classic)
 ns_linear, times_linear = zip(*results_linear)
 
 plt.plot(ns_classic, times_classic, marker='o', label='Classic DP')
-plt.plot(ns_linear, times_linear, marker='x', label='Linear-Time DP')
+plt.plot(ns_linear, times_linear, marker='o', label='Linear-Time DP')
 plt.xlabel('Number of Jobs (n)')
 plt.ylabel('Average Runtime (s)')
 plt.title('Runtime Comparison: Classic DP vs Linear-Time DP')

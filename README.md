@@ -1,10 +1,10 @@
 # Linear-Time Weighted Job Scheduling with Integer Times via Multi-Phase Preprocessing
 
-This repository contains the implementation and benchmarking code for the linear-time algorithm for solving the classic Weighted Interval Scheduling (WIS) problem over integer time domains, as described in the research paper:
+This repository contains the implementation and benchmarking code for my original linear-time algorithm for solving the classic Weighted Interval Scheduling (WIS) or Weighted Job Scheduling problem over bounded integer time domains, as described in my research paper:
 
-**Title**: Linear-Time Weighted Job Scheduling over Integer Time Domains  
+**Title**: Linear-Time Weighted Job Scheduling over Integer Time Domains via Multi-Phase Preprocessing
 **Author**: Amit Joshi  
-**Emails**:  
+**Email(s)**:  
 - amitjoshi2724@gmail.com  
 - amit.joshiusa@gmail.com  
 **GitHub**: [@amitjoshi24](https://github.com/amitjoshi24)
@@ -13,7 +13,7 @@ This repository contains the implementation and benchmarking code for the linear
 
 ## Overview
 
-The classic Weighted Job Scheduling problem is traditionally solved using dynamic programming and binary search with a time complexity of $O(n \log n)$. This implementation provides a linear-time algorithm, assuming job times are integers within a bounded range. My main contribution is avoiding repeated binary searches with a custom preprocessing algorithm. Coupled with linear sorting algorithms, we can now solve Weighted Job Scheduling in $O(n)$ under very realistic assumptions.
+The classic Weighted Job Scheduling problem is traditionally solved using dynamic programming and binary search with a time complexity of $O(n \log n)$. My solution and this implementation provides a linear-time algorithm, assuming job times are integers within a bounded range. My main contribution is avoiding repeated binary searches with a custom multi-phase preprocessing algorithm. Coupled with linear-time sorting algorithms such as Radix Sort, we can now solve Weighted Job Scheduling in $O(n)$ under very realistic assumptions.
 
 ### Files
 
