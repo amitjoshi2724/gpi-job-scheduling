@@ -6,6 +6,10 @@ import gc
 import matplotlib.pyplot as plt
 from scheduling_algos import classic_weighted_interval_scheduling, linear_time_weighted_scheduling
 
+'''
+paragraph{Experiment 2: Long Intervals (Heavy Overlap)}
+Job start times are random, but durations are long (e.g., 100,000 to 1,000,000 time units). Consequently, many jobs heavily overlap and early jobs often lack valid predecessors. This limits the benefit of binary search in the classic approach, as predecessor lookups frequently return $0$ (no valid predecessor) or nearby indices.
+'''
 def classic_weighted_interval_scheduling(jobs):
     jobs.sort(key=lambda x: x[1])
     n = len(jobs)
@@ -29,7 +33,7 @@ for n in range(1000, 100000+1, 1000):
         jobs = []
         for _ in range(n):
             start = random.randint(0, 10**6)
-            duration = random.randint(10_000, 100_000)
+            duration = random.randint(int(MAX_END * 0.1), int(MAX_END * 1.0))
             end = start + duration
             weight = random.randint(1, 100)
             jobs.append((start, end, weight))

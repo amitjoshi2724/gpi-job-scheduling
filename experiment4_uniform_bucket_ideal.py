@@ -2,42 +2,53 @@ import random
 import time
 import gc
 import matplotlib.pyplot as plt
+import numpy as np
 from scheduling_algos import classic_weighted_interval_scheduling, linear_time_weighted_scheduling
 
 RANDOM_SEED = 2724
-
 random.seed(RANDOM_SEED)
+np.random.seed(RANDOM_SEED)
+
 results_classic = []
 results_linear = []
 
-for n in range(1000, 100000+1, 1000):
+for n in range(1000, 100000 + 1, 1000):
     total_classic = 0
     total_linear = 0
     trials = 10
-    MAX_VAL = 10**6
+    K = 10**9  # Large time domain
+
     for _ in range(trials):
-        jobs = [(random.randint(0, MAX_VAL), random.randint(0, MAX_VAL), random.randint(1, 100)) for _ in range(n)]
-        jobs = [(min(s, e), max(s, e), w) for s, e, w in jobs]
-        # Classic
+        # Uniform start times over [0, K]
+        start_times = np.random.uniform(0, K, size=n)
+
+        # Uniform small float durations
+        durations = np.random.uniform(1.0, 1000.0, size=n)
+        end_times = start_times + durations
+
+        weights = np.random.randint(1, 101, size=n)
+        jobs = list(zip(start_times, end_times, weights))
+
+        # Classic DP
         gc.enable()
         gc.collect()
         gc.disable()
         start = time.perf_counter()
-        classicAnswer = classic_weighted_interval_scheduling(jobs, sortAlgo="default") # as opposed to "default"
+        classicAnswer = classic_weighted_interval_scheduling(jobs, sortAlgo="default")
         end = time.perf_counter()
         total_classic += (end - start)
 
-        # Linear
+        # Linear-Time DP (Bucket Sort)
         gc.enable()
         gc.collect()
         gc.disable()
         start = time.perf_counter()
-        linearTimeAnswer = linear_time_weighted_scheduling(jobs, sortAlgo="radix")
+        linearTimeAnswer = linear_time_weighted_scheduling(jobs, sortAlgo="bucket")
         end = time.perf_counter()
         total_linear += (end - start)
 
         if classicAnswer != linearTimeAnswer:
-            print ('INCORRECT ANSWER', classicAnswer, linearTimeAnswer)
+            print('INCORRECT ANSWER', classicAnswer, linearTimeAnswer)
             exit()
 
     avg_classic = total_classic / trials
@@ -46,8 +57,8 @@ for n in range(1000, 100000+1, 1000):
     results_linear.append((n, avg_linear))
     print(f"n = {n}, classic = {avg_classic:.6f} s, linear = {avg_linear:.6f} s")
 
-EXP_TITLE = "Random Integer Times"
-GPI_SORT = "(Radix Sort)"
+EXP_TITLE = "Bucket-Sort-Friendly Uniform Start Times"
+GPI_SORT = "(Bucket Sort)"
 # Plot
 ns_classic, times_classic = zip(*results_classic)
 ns_linear, times_linear = zip(*results_linear)

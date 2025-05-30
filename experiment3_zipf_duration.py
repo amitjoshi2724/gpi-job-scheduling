@@ -1,98 +1,94 @@
-# experiment_zipf.py
 import random
 import time
 import gc
-import numpy as np
-import os
 import matplotlib.pyplot as plt
+import numpy as np
 from scheduling_algos import classic_weighted_interval_scheduling, linear_time_weighted_scheduling
 
-# Setup
 RANDOM_SEED = 2724
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
-os.environ["OMP_NUM_THREADS"] = "1" # disable multi-thread noise
-os.makedirs("figures", exist_ok=True)
 
 results_classic = []
 results_linear = []
-results_classic_per_n = []
-results_linear_per_n = []
 
-for n in range(1000, 100001, 1000):
+for n in range(1000, 100000 + 1, 1000):
     total_classic = 0
     total_linear = 0
-    runs = 20
-    MAX_END = 10**6
-    MAX_DURATION = 10**5
+    trials = 10
+    K = 10**9  # Upper bound of time domain
+    for _ in range(trials):
+        # Clustered start times near 0 using truncated exponential
+        scale = K / 10  # Controls clustering tightness; lower = tighter near 0
+        start_times = np.random.exponential(scale=scale, size=n)
+        start_times = np.clip(start_times, 0, K)  # Ensure within [0, K]
 
-    for _ in range(runs):
-        jobs = []
-        for _ in range(n):
-            end = random.randint(0, MAX_END)
-            raw = np.random.zipf(2)
-            duration = min(MAX_DURATION, max(1, int(100 * raw)))
-            start = max(0, end - duration)
-            weight = random.randint(1, 100)
-            jobs.append((start, end, weight))
-        
-        jobs2 = jobs.copy()
+        # Zipf durations, scaled and capped
+        raw_zipf = np.random.zipf(a=2.0, size=n)
+        durations = np.minimum(100 * raw_zipf, 1e6)
+        end_times = start_times + durations
 
-        # Classic DP
+        weights = np.random.randint(1, 101, size=n)
+        jobs = list(zip(start_times, end_times, weights))
+
+        # Classic
+        gc.enable()
         gc.collect()
+        gc.disable()
         start = time.perf_counter()
-        classic_answer = classic_weighted_interval_scheduling(jobs)
+        classicAnswer = classic_weighted_interval_scheduling(jobs, sortAlgo="default")
         end = time.perf_counter()
         total_classic += (end - start)
 
-        # Linear-Time DP
+        # Linear
+        gc.enable()
         gc.collect()
+        gc.disable()
         start = time.perf_counter()
-        linear_answer = linear_time_weighted_scheduling(jobs2)
+        linearTimeAnswer = linear_time_weighted_scheduling(jobs, sortAlgo="spread")
         end = time.perf_counter()
         total_linear += (end - start)
 
-        if classic_answer != linear_answer:
-            print("INCORRECT ANSWER", classic_answer, linear_answer)
+        if classicAnswer != linearTimeAnswer:
+            print('INCORRECT ANSWER', classicAnswer, linearTimeAnswer)
             exit()
 
-    avg_classic = total_classic / runs
-    avg_linear = total_linear / runs
+    avg_classic = total_classic / trials
+    avg_linear = total_linear / trials
     results_classic.append((n, avg_classic))
     results_linear.append((n, avg_linear))
-    results_classic_per_n.append((n, avg_classic / n))
-    results_linear_per_n.append((n, avg_linear / n))
     print(f"n = {n}, classic = {avg_classic:.6f} s, linear = {avg_linear:.6f} s")
 
-# Unpack for plotting
-ns, classic_times = zip(*results_classic)
-_, linear_times = zip(*results_linear)
-_, classic_per_n = zip(*results_classic_per_n)
-_, linear_per_n = zip(*results_linear_per_n)
+EXP_TITLE = "Zipf-Distributed Durations with Early Start Bursts"
+GPI_SORT = "(Spreadsort)"
+# Plot
+ns_classic, times_classic = zip(*results_classic)
+ns_linear, times_linear = zip(*results_linear)
 
-# Plot 1: Total runtime
-plt.figure(figsize=(8, 5))
-plt.plot(ns, classic_times, marker='o', label='Classic DP with Binary Search')
-plt.plot(ns, linear_times, marker='o', label='Our Linear-Time DP with Preprocessing')
+ns = ns_classic # same values of n
+per_job_classic = [t / n for t, n in zip(times_classic, ns)]
+per_job_linear = [t / n for t, n in zip(times_linear, ns)]
+
+plt.plot(ns_classic, times_classic, marker='o', label='Classic DP')
+plt.plot(ns_linear, times_linear, marker='s', label='GPI Linear-Time DP' + GPI_SORT)
 plt.xlabel('Number of Jobs (n)')
 plt.ylabel('Average Runtime (s)')
-plt.title('Experiment 3 Zipf Durations (Wide Predecessor Spread): Total Runtime')
+plt.title('Runtime Comparison: ', EXP_TITLE)
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("figures/experiment3_total_runtime.pdf")
 plt.show()
 
-# Plot 2: Runtime per job
-plt.figure(figsize=(8, 5))
-plt.plot(ns, classic_per_n, marker='o', label='Classic DP with Binary Search (per job)')
-plt.plot(ns, linear_per_n, marker='o', label='Our Linear-Time DP with Preprocessing (per job)')
+fig2 = plt.figure(figsize=(10, 5))
+plt.plot(ns, per_job_classic, marker='o', label='Classic DP per job')
+plt.plot(ns, per_job_linear, marker='s', label='GPI Linear-Time DP per job' + GPI_SORT)
 plt.xlabel('Number of Jobs (n)')
 plt.ylabel('Average Runtime per Job (s)')
-plt.title('Experiment 3 Zipf Durations (Wide Predecessor Spread): Runtime per Job')
+plt.title('Per-Job Runtime: ', EXP_TITLE)
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("figures/experiment3_per_job_runtime.pdf")
-plt.show()
 
+# Display both at the same time
+plt.show(block=False)
+input("Press Enter to exit and close plots...")

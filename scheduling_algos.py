@@ -59,14 +59,70 @@ def radix_sort(jobs, key_index):
         exp *= base
     return jobs
 
-# Our novel O(n) Multi-Phase Preprocessing and DP Solution for WIS!
-def linear_time_weighted_scheduling(jobs):
+def bucket_sort(jobs, key_index):
     n = len(jobs)
-    end_ordered = radix_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
+    if n == 0:
+        return []
 
-    end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+    min_val = min(job[key_index] for job in jobs)
+    max_val = max(job[key_index] for job in jobs)
+    if max_val == min_val:
+        return jobs.copy()
 
-    start_ordered = radix_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+    # Create n buckets
+    buckets = [[] for _ in range(n)]
+    scale = (n - 1) / (max_val - min_val + 1e-9)  # avoid div by 0
+
+    # Assign jobs to buckets
+    for job in jobs:
+        idx = int((job[key_index] - min_val) * scale)
+        buckets[idx].append(job)
+
+    # Sort each bucket and concatenate
+    sorted_jobs = []
+    for bucket in buckets:
+        sorted_jobs.extend(sorted(bucket, key=lambda job: job[key_index]))
+    return sorted_jobs
+
+def spread_sort(jobs, key_index, depth=0, max_depth=10, min_bucket_size=16):
+    if len(jobs) <= min_bucket_size or depth >= max_depth:
+        return sorted(jobs, key=lambda job: job[key_index])
+
+    min_val = min(job[key_index] for job in jobs)
+    max_val = max(job[key_index] for job in jobs)
+    if max_val == min_val:
+        return jobs.copy()  # already sorted
+
+    num_buckets = int(len(jobs) ** 0.5) or 1
+    scale = num_buckets / (max_val - min_val + 1e-9)
+    buckets = [[] for _ in range(num_buckets)]
+    for job in jobs:
+        idx = int((job[key_index] - min_val) * scale)
+        idx = min(idx, num_buckets - 1)
+        buckets[idx].append(job)
+
+    sorted_jobs = []
+    for bucket in buckets:
+        sorted_jobs.extend(spread_sort(bucket, key_index, depth + 1, max_depth, min_bucket_size))
+    return sorted_jobs
+
+
+# Our novel O(n) Multi-Phase Preprocessing and DP Solution for WJS or WIS
+def linear_time_weighted_scheduling(jobs, sortAlgo='default'):
+    n = len(jobs)
+    if sortAlgo == 'radix':
+        end_ordered = radix_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
+        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+        start_ordered = radix_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+    elif sortAlgo == 'bucket':
+        end_ordered = bucket_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
+        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+        start_ordered = bucket_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+    elif sortAlgo == 'spread':
+        end_ordered = spread_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
+        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+        start_ordered = spread_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+
 
     p = [0] * (n + 1) # apparently a 1-indexed array
     endIndex = find_pred(end_ordered, start_ordered[n-1][0])+1 # endIndex is made to be 1-indexed
