@@ -7,7 +7,7 @@ This repository contains the implementation and benchmarking code for my origina
 **Email(s)**:  
 - amitjoshi2724@gmail.com  
 - amit.joshiusa@gmail.com  
-**GitHub**: [@amitjoshi24](https://github.com/amitjoshi24)
+**GitHub**: [@amitjoshi2724](https://github.com/amitjoshi2724)
 
 ---
 

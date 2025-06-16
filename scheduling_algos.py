@@ -84,7 +84,7 @@ def bucket_sort(jobs, key_index):
         sorted_jobs.extend(sorted(bucket, key=lambda job: job[key_index]))
     return sorted_jobs
 
-def spread_sort(jobs, key_index, depth=0, max_depth=10, min_bucket_size=16):
+def recursive_adaptive_bucket_sort(jobs, key_index, depth=0, max_depth=10, min_bucket_size=16):
     if len(jobs) <= min_bucket_size or depth >= max_depth:
         return sorted(jobs, key=lambda job: job[key_index])
 
@@ -93,7 +93,7 @@ def spread_sort(jobs, key_index, depth=0, max_depth=10, min_bucket_size=16):
     if max_val == min_val:
         return jobs.copy()  # already sorted
 
-    num_buckets = int(len(jobs) ** 0.5) or 1
+    num_buckets = len(jobs)
     scale = num_buckets / (max_val - min_val + 1e-9)
     buckets = [[] for _ in range(num_buckets)]
     for job in jobs:
@@ -103,12 +103,12 @@ def spread_sort(jobs, key_index, depth=0, max_depth=10, min_bucket_size=16):
 
     sorted_jobs = []
     for bucket in buckets:
-        sorted_jobs.extend(spread_sort(bucket, key_index, depth + 1, max_depth, min_bucket_size))
+        sorted_jobs.extend(recursive_adaptive_bucket_sort(bucket, key_index, depth + 1, max_depth, min_bucket_size))
     return sorted_jobs
 
 
 # Our novel O(n) Multi-Phase Preprocessing and DP Solution for WJS or WIS
-def linear_time_weighted_scheduling(jobs, sortAlgo='default'):
+def gpi_weighted_job_scheduling(jobs, sortAlgo='default'):
     n = len(jobs)
     if sortAlgo == 'radix':
         end_ordered = radix_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
@@ -118,11 +118,14 @@ def linear_time_weighted_scheduling(jobs, sortAlgo='default'):
         end_ordered = bucket_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
         start_ordered = bucket_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
-    elif sortAlgo == 'spread':
-        end_ordered = spread_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
+    elif sortAlgo == 'recursive bucket':
+        end_ordered = recursive_adaptive_bucket_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
-        start_ordered = spread_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
-
+        start_ordered = recursive_adaptive_bucket_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+    else:
+        end_ordered = sorted(jobs, key = lambda x: x[1])
+        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+        start_ordered = sorted(end_ordered, key = lambda x: x[0])
 
     p = [0] * (n + 1) # apparently a 1-indexed array
     endIndex = find_pred(end_ordered, start_ordered[n-1][0])+1 # endIndex is made to be 1-indexed
