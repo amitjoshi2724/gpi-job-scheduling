@@ -6,8 +6,8 @@ def generate_bucket_uniform_jobs(n):
     # Uniform start times over [0, K]
     start_times = np.random.uniform(0, K, size=n)
 
-    # Uniform small float durations
-    durations = np.random.uniform(1.0, 1000.0, size=n)
+    # Uniform float durations
+    durations = np.random.uniform(1.0, 10**6, size=n)
     end_times = start_times + durations
 
     weights = np.random.randint(1, 101, size=n)

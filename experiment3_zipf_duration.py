@@ -10,7 +10,7 @@ def generate_zipf_duration_with_early_start_burst(n):
 
     # Zipf durations, scaled and capped
     raw_zipf = np.random.zipf(a=2.0, size=n)
-    durations = np.minimum(100 * raw_zipf, 1e6)
+    durations = np.minimum(100 * raw_zipf, 10**6)
     end_times = start_times + durations
 
     weights = np.random.randint(1, 101, size=n)

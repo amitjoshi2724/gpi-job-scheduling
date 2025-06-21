@@ -15,7 +15,10 @@
 # Author: Amit Joshi
 # Email 1: amitjoshi2724@gmail.com
 # Email 2: amit.joshiusa@gmail.com
-# GitHub: https://github.com/amitjoshi24
+# GitHub: https://github.com/amitjoshi2724
+
+import boost_spreadsort
+import numpy as np
 
 # bisect_right, a binary search
 def find_pred(jobs, start_i):
@@ -122,6 +125,13 @@ def gpi_weighted_job_scheduling(jobs, sortAlgo='default'):
         end_ordered = recursive_adaptive_bucket_sort(jobs, key_index=1)  # sort by end time, 0-indexed array
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
         start_ordered = recursive_adaptive_bucket_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
+    elif sortAlgo == 'spread':
+        # Use the new reliable float_sort functions directly
+        end_ordered = boost_spreadsort.float_sort_tuples_by_key(jobs, 1)  # sort by end time
+        # Add indices
+        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
+        # Sort by start time using 4-tuple version
+        start_ordered = boost_spreadsort.float_sort_tuples_4_by_key(end_ordered, 0)  # sort by start time
     else:
         end_ordered = sorted(jobs, key = lambda x: x[1])
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
