@@ -126,12 +126,8 @@ def gpi_weighted_job_scheduling(jobs, sortAlgo='default'):
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
         start_ordered = recursive_adaptive_bucket_sort(end_ordered, key_index=0)  # sort by start time, 0-indexed array
     elif sortAlgo == 'spread':
-        # Use the new reliable float_sort functions directly
-        end_ordered = boost_spreadsort.float_sort_tuples_by_key(jobs, 1)  # sort by end time
-        # Add indices
-        end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
-        # Sort by start time using 4-tuple version
-        start_ordered = boost_spreadsort.float_sort_tuples_4_by_key(end_ordered, 0)  # sort by start time
+        # Use the optimized function that does both sorts and adds indices in one C++ call
+        end_ordered, start_ordered = boost_spreadsort.float_sort_both_with_indices(jobs)
     else:
         end_ordered = sorted(jobs, key = lambda x: x[1])
         end_ordered = [(t[0], t[1], t[2], i+1) for i, t in enumerate(end_ordered)]
