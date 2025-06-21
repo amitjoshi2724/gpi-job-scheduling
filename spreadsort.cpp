@@ -91,9 +91,51 @@ std::vector<std::tuple<double, double, double, int>> float_sort_tuples_4_by_key(
     return sorted_jobs;
 }
 
+// Combined function that does both sorts and adds indices in one call
+void float_sort_both_with_indices(const std::vector<std::tuple<double, double, double>>& jobs,
+                                 std::vector<std::tuple<double, double, double, int>>& end_ordered,
+                                 std::vector<std::tuple<double, double, double, int>>& start_ordered) {
+    size_t n = jobs.size();
+    
+    // First sort by end time (index 1) - WITHOUT indices yet
+    std::vector<SortableTuple3> sortable_end;
+    sortable_end.reserve(n);
+    for (const auto& job : jobs) {
+        double key = std::get<1>(job);  // end time
+        sortable_end.emplace_back(key, job);
+    }
+    float_sort(sortable_end.begin(), sortable_end.end());
+    
+    // Extract end-ordered jobs and ADD INDICES HERE (like the Python list comprehension)
+    end_ordered.clear();
+    end_ordered.reserve(n);
+    for (size_t i = 0; i < n; ++i) {
+        const auto& item = sortable_end[i];
+        end_ordered.emplace_back(std::get<0>(item.data), std::get<1>(item.data), std::get<2>(item.data), i + 1);
+    }
+    
+    // Now sort by start time (index 0) for start-ordered jobs
+    std::vector<SortableTuple4> sortable_start;
+    sortable_start.reserve(n);
+    for (const auto& job : end_ordered) {
+        double key = std::get<0>(job);  // start time
+        sortable_start.emplace_back(key, job);
+    }
+    float_sort(sortable_start.begin(), sortable_start.end());
+    
+    // Extract start-ordered jobs
+    start_ordered.clear();
+    start_ordered.reserve(n);
+    for (const auto& item : sortable_start) {
+        start_ordered.push_back(item.data);
+    }
+}
+
 PYBIND11_MODULE(boost_spreadsort, m) {
     m.doc() = "Boost Spreadsort bindings using pybind11";
     m.def("float_sort_doubles", &float_sort_doubles, "Sort vector of doubles using float_sort", py::arg("vals"));
     m.def("float_sort_tuples_by_key", &float_sort_tuples_by_key, "Sort 3-tuples by float key using float_sort", py::arg("jobs"), py::arg("key_index"));
     m.def("float_sort_tuples_4_by_key", &float_sort_tuples_4_by_key, "Sort 4-tuples by float key using float_sort", py::arg("jobs"), py::arg("key_index"));
+    m.def("float_sort_both_with_indices", &float_sort_both_with_indices, "Sort jobs by both end and start times with indices in one call", 
+          py::arg("jobs"), py::arg("end_ordered"), py::arg("start_ordered"));
 }
