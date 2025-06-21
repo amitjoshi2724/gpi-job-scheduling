@@ -19,8 +19,8 @@ def generate_zipf_duration_with_early_start_burst(n):
 
 run_experiment(
     exp_title="Zipf Durations with Early Start Bursts",
-    gpi_linear_sort = "recursive bucket",
-    gpi_linear_sort_label="(Recursive Bucket Sort)",
+    gpi_linear_sort = "spread",
+    gpi_linear_sort_label="(Spreadsort)",
     job_generator=generate_zipf_duration_with_early_start_burst
 )
 

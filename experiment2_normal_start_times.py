@@ -15,6 +15,6 @@ def generate_normal_start_jobs(n):
 run_experiment(
     exp_title="Normally Distributed Start Times",
     gpi_linear_sort = "spread",
-    gpi_linear_sort_label="(Spreadort)",
+    gpi_linear_sort_label="(Spreadsort)",
     job_generator=generate_normal_start_jobs
 )
