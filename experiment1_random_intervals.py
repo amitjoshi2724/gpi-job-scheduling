@@ -11,6 +11,7 @@ run_experiment(
     exp_title="Random Integer Times",
     gpi_linear_sort = "radix",
     gpi_linear_sort_label="(Radix Sort)",
+    n_step=1000,
     job_generator=generate_random_integer_jobs
 )
 

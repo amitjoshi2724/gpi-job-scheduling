@@ -135,6 +135,7 @@ def gpi_weighted_job_scheduling(jobs, sortAlgo='default'):
 
     p = [0] * (n + 1) # apparently a 1-indexed array
     endIndex = find_pred(end_ordered, start_ordered[n-1][0])+1 # endIndex is made to be 1-indexed
+    #endIndex = n
     for startIndex in range(n,0,-1): # startIndex is 1-indexed
         while endIndex >= 1 and end_ordered[endIndex-1][1] > start_ordered[startIndex-1][0]:
             endIndex -= 1
