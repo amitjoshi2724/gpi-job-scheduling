@@ -3,7 +3,7 @@ import gc
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-from scheduling_algos import classic_weighted_interval_scheduling, gpi_weighted_job_scheduling
+from scheduling_algos import classical_weighted_interval_scheduling, gpi_weighted_job_scheduling
 from plotting import make_plots
 
 
@@ -26,7 +26,7 @@ def run_experiment(exp_title, gpi_linear_sort, gpi_linear_sort_label, job_genera
             # Classic
             gc.enable(); gc.collect(); gc.disable()
             start = time.perf_counter()
-            classicAnswer = classic_weighted_interval_scheduling(jobs, sortAlgo="default") # as opposed to "default"
+            classicAnswer = classical_weighted_interval_scheduling(jobs, sortAlgo="default") # as opposed to "default"
             end = time.perf_counter()
             total_classic += (end - start)
 

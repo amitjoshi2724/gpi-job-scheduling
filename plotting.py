@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
+import os
 
 def make_plots(EXP_TITLE, GPI_SORT, results_classic, results_gpi_tim, results_gpi_linear):
+    # Create figures directory if it doesn't exist
+    figures_dir = "figures"
+    if not os.path.exists(figures_dir):
+        os.makedirs(figures_dir)
+    
     ns_classic, times_classic = zip(*results_classic)
     ns_tim, times_tim = zip(*results_gpi_tim)
     ns_linear, times_linear = zip(*results_gpi_linear)
@@ -23,7 +29,7 @@ def make_plots(EXP_TITLE, GPI_SORT, results_classic, results_gpi_tim, results_gp
     plt.legend(fontsize=12, markerscale=1.5)
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(EXP_TITLE.replace(' ', '_') + "_runtime_total.pdf")
+    plt.savefig(os.path.join(figures_dir, EXP_TITLE.replace(' ', '_') + "_runtime_total.pdf"))
 
     # Per-Job Runtime Plot
     plt.figure(figsize=(9,5))
@@ -36,7 +42,7 @@ def make_plots(EXP_TITLE, GPI_SORT, results_classic, results_gpi_tim, results_gp
     plt.legend(fontsize=12, markerscale=1.5)
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(EXP_TITLE.replace(' ', '_') + "_runtime_per_job.pdf")
+    plt.savefig(os.path.join(figures_dir, EXP_TITLE.replace(' ', '_') + "_runtime_per_job.pdf"))
 
     # Comment out line below if you don't want to see plots
     #plt.show()
