@@ -19,8 +19,12 @@ The classic Weighted Job Scheduling problem is traditionally solved using dynami
 
 - `scheduling_algos.py`: Contains both the classical DP algorithm and the linear-time DP version with radix sort and preprocessing.
 - `experiment*.py`: Run runtime benchmarks for both the classical and linear-time approaches, across varying input sizes.
+- `running.py`: Runs experiments in a controlled environment with multiple trials and measures time for solving instances
+- `plotting.py`: Code for plotting the overall runtime and the per-job runtime for experiments to visualize scaling trends of GPI.
+- `spreadsort.cpp`: C++ code for Spreadsort on Job Tuples, to be used in Python via Pybind
+- `boost_spreadsort.cpython-313-darwin.so`: Compiled version of `spreadsort.cpp`
+- `run_experiments.sh`: shell script to run all experiments
 - `LICENSE`: Apache License 2.0 declaration.
-- `Figure_1.png`: Example output showing empirical runtime comparison.
 - `preprint.pdf`: Preprint submitted to arXiv
 - `publication.pdf`: Final paper accepted to IPL
 
@@ -31,13 +35,13 @@ The classic Weighted Job Scheduling problem is traditionally solved using dynami
 To benchmark the algorithms:
 
 ```bash
-python experiment.py
+python experiment[INSERT EXPERIMENT HERE].py
 ```
 
 To integrate or use the algorithms independently:
 
 ```python
-from scheduling_algos import classic_weighted_interval_scheduling, linear_time_weighted_scheduling
+from scheduling_algos import classical_weighted_interval_scheduling, linear_time_weighted_scheduling
 ```
 
 ---

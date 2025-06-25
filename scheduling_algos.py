@@ -32,7 +32,7 @@ def find_pred(jobs, start_i):
     return lo - 1  # correctly gives index of latest non-overlapping job
 
 # O(n log(n)) DP solution for WIS, our baseline to improve upon
-def classic_weighted_interval_scheduling(jobs, sortAlgo='default'):
+def classical_weighted_interval_scheduling(jobs, sortAlgo='default'):
     if sortAlgo == 'radix':
         jobs = radix_sort(jobs, key_index=1) # sort by end time with radix sort
     else:
