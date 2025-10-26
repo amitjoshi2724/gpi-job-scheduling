@@ -21,8 +21,10 @@ import boost_spreadsort
 import numpy as np
 
 # bisect_right, a binary search
-def find_pred(jobs, start_i):
-    lo, hi = 0, len(jobs)
+def find_pred(jobs, start_i, cur_index = None):
+    if cur_index is None:
+        cur_index = len(jobs)
+    lo, hi = 0, cur_index
     while lo < hi:
         mid = (lo + hi) // 2
         if jobs[mid][1] <= start_i:
@@ -42,7 +44,7 @@ def classical_weighted_interval_scheduling(jobs, sortAlgo='default'):
 
     for i in range(1, n + 1):
         start_i, end_i, weight_i = jobs[i - 1]
-        pred_idx = find_pred(jobs, start_i)
+        pred_idx = find_pred(jobs, start_i, i)
         include = weight_i + dp[pred_idx + 1] #dp[0] = 0
         dp[i] = max(dp[i - 1], include)
 

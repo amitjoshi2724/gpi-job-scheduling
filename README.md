@@ -1,6 +1,6 @@
 # Global Predecessor Indexing: Avoiding Binary Search in Weighted Job Scheduling
 
-This repository contains the implementation and benchmarking code for my original (Global Predecessor Indexing) for solving the classic Weighted Interval Scheduling (WIS) or Weighted Job Scheduling (WJS) problem without Binary Search. Over time domains distributions that admit linear sorting, this results in a linear-time solution as described in my research paper:
+This repository contains the implementation and benchmarking code for my original (Global Predecessor Indexing) for solving the classic Weighted Interval Scheduling (WIS) or Weighted Job Scheduling (WJS) problem without Binary Search. Research paper:
 <https://arxiv.org/abs/2506.22922>
 
 

@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{kleinberg2005}
+J.~Kleinberg, Éva Tardos, Algorithm Design, 1st Edition, Pearson/Addison-Wesley, Boston, MA, 2005.
+
+\bibitem{timsort2002}
+T.~Peters, Timsort: A hybrid stable sorting algorithm, \url{https://github.com/python/cpython/blob/main/Objects/listsort.txt} (2002).
+
+\bibitem{cormen2009}
+T.~H. Cormen, C.~E. Leiserson, R.~L. Rivest, C.~Stein, Introduction to Algorithms, 3rd Edition, MIT Press, 2009.
+
+\bibitem{aho1983}
+A.~V. Aho, J.~E. Hopcroft, J.~D. Ullman, Data Structures and Algorithms, 1st Edition, Addison-Wesley, 1983.
+
+\bibitem{spreadsort2002}
+S.~J. Ross, The spreadsort high-performance general-case sorting algorithm, in: Proceedings of the International Conference on Parallel and Distributed Processing Techniques and Applications (PDPTA), Vol.~3, CSREA Press, 2002, pp. 1100--1106.
+
+\bibitem{kahn1962}
+A.~B. Kahn, \href{https://doi.org/10.1145/368996.369025}{Topological sorting of large networks}, Communications of the ACM 5~(11) (1962) 558--562.
+\newblock \href {https://doi.org/10.1145/368996.369025} {\path{doi:10.1145/368996.369025}}.
+\newline\urlprefix\url{https://doi.org/10.1145/368996.369025}
+
+\end{thebibliography}
